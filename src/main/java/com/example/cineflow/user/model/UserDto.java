@@ -13,5 +13,13 @@ public class UserDto {
         private String name;
     }
 
+    public record LoginReq(
+            String email,
+            String password
+    ) {}
 
+    public record LoginRes(
+            String accessToken,
+            String tokenType
+    ) {}
 }
