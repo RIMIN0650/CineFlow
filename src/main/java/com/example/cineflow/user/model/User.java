@@ -1,7 +1,6 @@
 package com.example.cineflow.user.model;
 
 import com.example.cineflow.common.enums.Role;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,11 +27,21 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    public User(String email, String password, String name) {
+    private User(String email, String password, String name, Role role) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.role = Role.USER;
+        this.role = role;
+    }
+
+    // 일반 사용자 생성
+    public static User createUser(String email, String password, String name) {
+        return new User (email, password, name, Role.USER);
+    }
+
+    // 관리자 생성
+    public static User createAdmin(String email, String password, String name) {
+        return new User (email, password, name, Role.ADMIN);
     }
 
 }
