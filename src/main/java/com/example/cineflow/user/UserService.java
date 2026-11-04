@@ -14,24 +14,36 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void signup(UserDto.SignupReq dto) {
-        if (userRepository.existsByEmail(dto.getEmail())) {
+        if (userRepository.existsByEmail(dto.email())) {
             throw new IllegalArgumentException(
                     "이미 사용중인 이메일입니다"
             );
         }
 
-        String encodedPassword = passwordEncoder.encode(dto.getPassword());
-
-
-        User user = new User(
-                dto.getEmail(),
-                encodedPassword,
-                dto.getName()
+        User user = User.createUser(
+                dto.email(),
+                passwordEncoder.encode(dto.password()),
+                dto.name()
         );
 
         userRepository.save(user);
     }
 
 
+    public void signupAdmin(UserDto.AdminSignupReq dto) {
+
+        if (userRepository.existsByEmail(dto.email())) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다");
+        }
+
+        User user = User.createAdmin(
+                dto.email(),
+                passwordEncoder.encode(dto.password()),
+                dto.name()
+        );
+
+        userRepository.save(user);
+
+    }
 
 }
