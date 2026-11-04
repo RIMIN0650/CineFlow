@@ -45,9 +45,9 @@ public class JwtFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
+                    userDetails, // 인증된 사용자 정보 (Principal)
+                    null, // 자격 증명, 여기서는 비밀번호를 사용하지 않으므로 null
+                    userDetails.getAuthorities() // 인증 객체에 현재 사용자의 권한 정보를 전달하는 역할
             );
 
             authenticationToken.setDetails(
@@ -55,6 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
                             .buildDetails(request)
             );
 
+            // Spring Security가 현재 요청의 인증 정보를 보관
             SecurityContextHolder.getContext()
                     .setAuthentication(authenticationToken);
 

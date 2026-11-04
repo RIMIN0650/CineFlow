@@ -22,4 +22,13 @@ public class UserDto {
             String accessToken,
             String tokenType
     ) {}
+
+    public record UserInfoRes (
+            Long idx,
+            String email,
+            String name,
+            String role
+    ) {}
+
+
 }
