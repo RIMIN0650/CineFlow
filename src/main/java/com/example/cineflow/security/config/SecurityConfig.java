@@ -44,10 +44,13 @@ public class SecurityConfig {
 
 
                         .requestMatchers(
-                                // 영화 조회는 누구나 가능
+                                // 영화 조회
                                 HttpMethod.GET,
                                 "/api/catalog/movies",
-                                "/api/catalog/movies/**"
+                                "/api/catalog/movies/**",
+                                // 영화관 조회
+                                "/api/catalog/theaters",
+                                "/api/catalog/theaters/**"
                         ).permitAll()
 
 
@@ -58,17 +61,20 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.POST,
-                                "/api/catalog/movies"
+                                "/api/catalog/movies",
+                                "/api/catalog/theaters"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(
                                 HttpMethod.PUT,
-                                "/api/catalog/movies/**"
+                                "/api/catalog/movies/**",
+                                "/api/catalog/theaters/**"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(
                                 HttpMethod.DELETE,
-                                "/api/catalog/movies/**"
+                                "/api/catalog/movies/**",
+                                "/api/catalog/theaters/**"
                         ).hasRole("ADMIN")
 
 
