@@ -4,6 +4,7 @@ import com.example.cineflow.security.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -36,13 +37,41 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // 로그인 및 회원강비은 누구나 접근 가능
-                        .requestMatchers("/api/users/signup",
-                                "/api/users/login").permitAll()
+                        .requestMatchers(
+                                "/api/users/signup",
+                                "/api/users/login"
+                        ).permitAll()
+
+
+                        .requestMatchers(
+                                // 영화 조회는 누구나 가능
+                                HttpMethod.GET,
+                                "/api/catalog/movies",
+                                "/api/catalog/movies/**"
+                        ).permitAll()
 
 
                         // 관리자만 접근 가능
                         .requestMatchers("/api/admin/**")
                         .hasRole("ADMIN")
+
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/catalog/movies"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/catalog/movies/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/catalog/movies/**"
+                        ).hasRole("ADMIN")
+
+
 
                         // 나머지 요청은 인증 필요
                         .anyRequest().authenticated()
