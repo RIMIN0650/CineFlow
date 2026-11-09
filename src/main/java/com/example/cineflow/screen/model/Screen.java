@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -59,6 +61,18 @@ public class Screen {
         this.name = name;
         this.totalSeats = totalSeats;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @OneToMany(mappedBy = "screen", fetch = FetchType.LAZY) // mappedBy : 외래키를 직접 관리하지 않는다는 의미.
+    // 실제 외래 키는 ScreenSeat의 @ManyToOne이 관리
+    private List<ScreenSeat> seats = new ArrayList<>();
+
+    public void addSeat(ScreenSeat seat) {
+        seats.add(seat);
+    }
+
+    public void removeSeat(ScreenSeat seat) {
+        seats.remove(seat);
     }
 
 }
