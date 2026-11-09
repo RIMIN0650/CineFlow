@@ -56,7 +56,8 @@ public class SecurityConfig {
                                 "/api/catalog/screens/**",
                                 // 좌석 조회
                                 "/api/catalog/seats/**",
-                                "/api/catalog/screens/*/seats"
+                                "/api/catalog/screens/*/seats",
+                                "/api/catalog/screenings/**"
                         ).permitAll()
 
 
@@ -70,7 +71,8 @@ public class SecurityConfig {
                                 "/api/catalog/movies",
                                 "/api/catalog/theaters",
                                 "/api/catalog/screens",
-                                "/api/catalog/screens/*/seats" // 좌석 등록
+                                "/api/catalog/screens/*/seats", // 좌석 등록
+                                "/api/catalog/screenings/**"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(
@@ -78,7 +80,8 @@ public class SecurityConfig {
                                 "/api/catalog/movies/**",
                                 "/api/catalog/theaters/**",
                                 "/api/catalog/screens/**",
-                                "/api/catalog/seats/**" // 좌석 수정
+                                "/api/catalog/seats/**",
+                                "/api/catalog/screenings/**"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(
@@ -86,7 +89,8 @@ public class SecurityConfig {
                                 "/api/catalog/movies/**",
                                 "/api/catalog/theaters/**",
                                 "/api/catalog/screens/**",
-                                "/api/catalog/seats/**" // 좌석 삭제
+                                "/api/catalog/seats/**",
+                                "/api/catalog/screenings/**"
                         ).hasRole("ADMIN")
 
 
