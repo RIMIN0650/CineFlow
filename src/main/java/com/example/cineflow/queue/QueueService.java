@@ -7,6 +7,8 @@ import com.example.cineflow.user.UserRepository;
 import com.example.cineflow.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,9 @@ public class QueueService {
 
     @Qualifier("queueAdmissionScript")
     private final DefaultRedisScript<Long> queueAdmissionScript;
+
+    @Qualifier("queueTokenValidationScript")
+    private final DefaultRedisScript<Long> queueTokenValidationScript;
 
     private final UserRepository userRepository;
     private final ScreeningRepository screeningRepository;
@@ -271,5 +276,64 @@ public class QueueService {
 
     }
 
-    
+
+
+
+
+    // 토큰 검증 메서드
+    public QueueDto.QueueTokenValidationResponse validateToken(
+            Long screeningIdx,
+            String email,
+            String token
+    ) {
+        if (token == null || token.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "입장 토큰이 필요합니다."
+            );
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "사용자를 찾을 수 없습니다."
+                        )
+                );
+
+        screeningRepository.findById(screeningIdx)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "상영 정보를 찾을 수 없습니다."
+                        )
+                );
+
+        Long userIdx = user.getIdx();
+
+        String activeKey = getActiveKey(screeningIdx);
+        String tokenKey = getTokenKey(screeningIdx, userIdx);
+
+        long now = Instant.now().getEpochSecond();
+
+        Long result = redisTemplate.execute(
+                queueTokenValidationScript,
+                List.of(activeKey, tokenKey),
+                userIdx.toString(),
+                token,
+                String.valueOf(now)
+        );
+
+        boolean valid = result != null && result == 1L;
+
+        return new QueueDto.QueueTokenValidationResponse(
+                screeningIdx,
+                userIdx,
+                valid,
+                valid ? "VALID" : "INVALID"
+        );
+
+    }
+
+
 }

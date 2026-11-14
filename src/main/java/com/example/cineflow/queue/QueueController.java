@@ -58,4 +58,19 @@ public class QueueController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/{screeningIdx}/validate")
+    public ResponseEntity<QueueDto.QueueTokenValidationResponse> validateToken(
+            @PathVariable Long screeningIdx,
+            @RequestBody QueueDto.QueueTokenValidationRequest request,
+            Authentication authentication
+    ) {
+        QueueDto.QueueTokenValidationResponse response =
+                queueService.validateToken(
+                screeningIdx,
+                        authentication.getName(),
+                        request.token()
+                );
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -122,4 +122,57 @@ public class RedisConfig {
     }
 
 
+    // 토큰 검증 Script
+    @Bean
+    public DefaultRedisScript<Long> queueTokenValidationScript() {
+
+        String script = """
+                local activeKey = KEYS[1]
+                local tokenKey = KEYS[2]
+                
+                local userId = ARGV[1]
+                local token = ARGV[2]
+                local now = tonumber(ARGV[3])
+                
+                -- 활성 사용자 만료 여부 확인
+                local expiresAt = redis.call('ZSCORE', activeKey, userId)
+                
+                if not expiresAt then
+                    return 0
+                end
+                
+                -- 입장 시간 만료
+                if tonumber(expriesAt) <= now then
+                    redis.call('ZREM', activeKey, userId)
+                    redis.call('DEL', tokenKey)
+                    return 0
+                end
+                
+                -- 전달받은 토큰 확인
+                local storedToken = redis.call('GET', tokenKey)
+                
+                if not storedToekn of storedToken ~= token then
+                    return 0
+                end
+                
+                
+                return 1
+                """;
+        DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
+        redisScript.setScriptText(script);
+        redisScript.setResultType(Long.class);
+
+        return redisScript;
+
+        /*
+        이 Script 는 다음 세 가지를 확인한다
+        1. 사용자가 현재 active에 등록되어 있는가?
+        2. 입장 허용 시간이 만료되지 않았는가?
+        3. 클라이언트가 보낸 토큰과 Redis에 저장된 토큰이 일치하는가?
+
+        세 조건이 모두 맞으면 1, 그렇지 않으면 0
+         */
+    }
+
+
 }
