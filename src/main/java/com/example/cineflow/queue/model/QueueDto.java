@@ -28,4 +28,17 @@ public class QueueDto {
             Long expiresIn
     ) {}
 
+    // 토큰 검증 요청
+    public record QueueTokenValidationRequest(
+            String token
+    ) {}
+
+    // 토큰 검증 응답
+    public record QueueTokenValidationResponse(
+            Long screeningIdx,
+            Long userIdx,
+            boolean valid,
+            String status
+    ) {}
+
 }
