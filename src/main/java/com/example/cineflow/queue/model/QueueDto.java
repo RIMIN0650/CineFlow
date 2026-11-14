@@ -19,4 +19,13 @@ public class QueueDto {
             String status
     ) {}
 
+    // 입장 토큰 발급 응답
+    public record QueueAdmissionResponse(
+            Long screenIdx,
+            Long userIdx,
+            String token,
+            String status,
+            Long expiresIn
+    ) {}
+
 }

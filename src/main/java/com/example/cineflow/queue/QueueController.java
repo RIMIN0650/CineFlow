@@ -44,5 +44,18 @@ public class QueueController {
         return ResponseEntity.ok(response);
     }
 
+    // 입장 API
+    @PostMapping("/{screeningIdx}/admit")
+    public ResponseEntity<QueueDto.QueueAdmissionResponse> admitQueue(
+            @PathVariable Long screeningIdx,
+            Authentication authentication
+    ) {
+        QueueDto.QueueAdmissionResponse response = queueService.admitQueue(
+                screeningIdx,
+                authentication.getName()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 
 }
