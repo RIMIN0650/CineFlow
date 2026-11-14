@@ -2,6 +2,7 @@ package com.example.cineflow.security.config;
 
 import com.example.cineflow.security.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,6 +36,11 @@ public class SecurityConfig {
                     )
                 )
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(
+                                "/api/bookings/**",
+                                "/api/queue/**"
+                        ).authenticated()
 
                         // 로그인 및 회원가입은 누구나 접근 가능
                         .requestMatchers(
@@ -93,10 +99,6 @@ public class SecurityConfig {
                                 "/api/catalog/screenings/**"
                         ).hasRole("ADMIN")
 
-
-
-                        .requestMatchers("/api/bookings/**").authenticated()
-
                         // 나머지 요청은 인증 필요
                         .anyRequest().authenticated()
 
@@ -134,6 +136,20 @@ public class SecurityConfig {
             AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+
+
+    @Bean
+    public FilterRegistrationBean<JwtFilter> jwtFilterRegistration(
+            JwtFilter jwtFilter
+    ) {
+        FilterRegistrationBean<JwtFilter> registration =
+                new FilterRegistrationBean<>(jwtFilter);
+
+        registration.setEnabled(false);
+
+        return registration;
     }
 
 }

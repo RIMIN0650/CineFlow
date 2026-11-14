@@ -35,8 +35,31 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+
+def loadEnv = {
+    def envFile = file('.env')
+    def map = [:]
+    if (envFile.exists()) {
+        envFile.eachLine { line ->
+            line = line.trim()
+            if (line && !line.startsWith('#') && line.contains('=')) {
+                def (k, v) = line.split('=', 2)
+                map[k.trim()] = v.trim()
+            }
+        }
+    }
+    return map
+}
+
+tasks.withType(Test).configureEach {
+    environment loadEnv()
 }
