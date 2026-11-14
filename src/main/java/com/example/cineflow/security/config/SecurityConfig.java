@@ -36,7 +36,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // 로그인 및 회원강비은 누구나 접근 가능
+                        // 로그인 및 회원가입은 누구나 접근 가능
                         .requestMatchers(
                                 "/api/users/signup",
                                 "/api/users/login"
@@ -94,6 +94,8 @@ public class SecurityConfig {
                         ).hasRole("ADMIN")
 
 
+
+                        .requestMatchers("/api/bookings/**").authenticated()
 
                         // 나머지 요청은 인증 필요
                         .anyRequest().authenticated()
